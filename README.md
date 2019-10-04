@@ -1,7 +1,7 @@
 **All the work was done in JF healthcare.**
 
 
-### dataset
+### Dataset:
 
 Makerere University, Uganda
 
@@ -9,7 +9,7 @@ Makerere University, Uganda
 - [paper](http://proceedings.mlr.press/v56/Quinn16.pdf)
 - [code](https://github.com/jqug/microscopy-object-detection/blob/master/CNN%20training%20%26%20evaluation%20-%20tuberculosis.ipynb)
 
-### requirements:
+### Requirements:
 
 ```
 scipy==0.19.0
