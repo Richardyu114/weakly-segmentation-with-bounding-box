@@ -22,7 +22,7 @@ opencv-python
 matplotlib
 lxml
 ```
-You can use `pip` to install these packages. Please add `-i https://mirrors.aliyun.com/pypi/simple` after package name if are you in China. 
+You can use `pip` to install these packages. Please add `-i https://mirrors.aliyun.com/pypi/simple` after package name if you are in China. 
 
 
 ### Example of this project:
