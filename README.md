@@ -12,6 +12,7 @@ Makerere University, Uganda
 ### Requirements:
 
 ```
+python3
 scipy==0.19.0
 numpy
 pytroch>=1.1.0
