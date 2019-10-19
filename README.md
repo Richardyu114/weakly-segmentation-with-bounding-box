@@ -1,6 +1,8 @@
 **All the work was done in [JF Healthcare](http://www.jfhealthcare.com/En/#home).**
 
 
+
+
 ### Dataset:
 
 Makerere University, Uganda
@@ -21,6 +23,7 @@ PIL
 opencv-python
 matplotlib
 lxml
+[pydensecrf](https://github.com/lucasb-eyer/pydensecrf)
 ```
 You can use `pip` to install these packages. Please add `-i https://mirrors.aliyun.com/pypi/simple` after package name if you are in China. 
 
