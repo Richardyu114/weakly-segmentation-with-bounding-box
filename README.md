@@ -31,4 +31,4 @@ You can use `pip` to install these packages. Please add `-i https://mirrors.aliy
 ### Example of this project:
 ![GrabCut+FCN+FL](https://raw.githubusercontent.com/Richardyu114/weakly-segmentation-with-bounding-box/master/img/5.png)
 
-It will be released soon.
+
