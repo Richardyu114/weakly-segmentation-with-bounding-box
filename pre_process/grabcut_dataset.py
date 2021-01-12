@@ -21,7 +21,7 @@ sys.path.append('util/')
 import tbvoc_info
 
 """ file configuration"""
-dataset_dir = '/home/zj/yzt/Sputum_Smear.pytorch_3/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
 anns_dir = os.path.join(dataset_dir + 'Annotations/')
 train_pair_dir = os.path.join(dataset_dir, 'dataset_pairs.txt')
 img_dir = os.path.join(dataset_dir, 'JPEGImages/')

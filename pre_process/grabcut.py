@@ -53,10 +53,11 @@ import tbvoc_info
 from draw_bbox import get_int_coor
 
 """ file configuration"""
-dataset_dir = '/home/JFHEALTHCARE/zhentao.yu/ISBI/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
 anns_dir = os.path.join(dataset_dir + 'Annotations/')
 #you may also need generate val grabcut segments
 #if you want to add val loss in train.py
+#here I have gt in test, so I just grabcut all imgs in trainset
 train_pair_dir = os.path.join(dataset_dir, 'train_pairs.txt')
 img_dir = os.path.join(dataset_dir, 'JPEGImages/')
 
@@ -157,8 +158,14 @@ def grabcut(img_name):
               #set the numpy value to class_id
               masks[j][0] = np.where((masks[j][0]==1), class_id, 0).astype('uint8')
               # save grabcut_inst(one object in a image)
+
+              # if you hava problem like ValueError: 'arr' does not have a suitable array shape for any mode
+              # maybe the maks[j][0] has wrong shape
+              # in my project, it casued by some wrong annotations
+              #https://blog.csdn.net/yyhhlancelot/article/details/81477830
+              #print(masks[j][0].shape,img_name)
               scipy.misc.toimage(masks[j][0], cmin=0, cmax=255, pal=tbvoc_info.colors_map,
-                                                      mode='P' ).save((grabcut_dir).rstrip()+masks[j][1])
+                                 mode='P' ).save((grabcut_dir).rstrip()+masks[j][1])
         
         """merge masks"""
         # built array(img.shape size)
@@ -167,7 +174,7 @@ def grabcut(img_name):
                 mask_ = mask_ + mask[0]
         # save segmetation_label(every object in a image)
         scipy.misc.toimage(mask_, cmin=0, cmax=255, pal=tbvoc_info.colors_map,
-                                                mode='P').save((segmentation_label_dir+img_name).rstrip()+'.png')
+                           mode='P').save((segmentation_label_dir+img_name).rstrip()+'.png')
         
         """create figure with masks and bbox in a image"""
         fig = plt.figure()
@@ -188,7 +195,7 @@ def grabcut(img_name):
                 # draw mask in image(RGB)
                 for c in range(3):
                        img[:, :, c] = np.where((mask[:, :, 0] != 0),
-                                                                      img[:, :, c]*0.2+0.8*color[c], img[:, :, c])
+                                                img[:, :, c]*0.2+0.8*color[c], img[:, :, c])
                 #compute bbox coordinates
                 #reference: https://www.cnblogs.com/xiaopengli/p/8058408.html
                 # use axes, so the coordinates is relative

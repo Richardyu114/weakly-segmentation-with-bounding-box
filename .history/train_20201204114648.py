@@ -309,4 +309,24 @@ def train_model(num_epoch=30):#, update_epoch=10):
 
 if __name__ == '__main__':
 
-    train_model(num_epoch=10) 
+    train_model(num_epoch=10)
+
+
+
+
+
+                                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

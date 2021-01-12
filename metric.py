@@ -26,7 +26,7 @@ from draw_bbox import get_int_coor
 
 
 """file configuration"""
-dataset_dir = '/home/JFHEALTHCARE/zhentao.yu/ISBI/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
 val_dir = os.path.join(dataset_dir, 'ImageSets/Main/val.txt')
 test_dir = os.path.join(dataset_dir, 'ImageSets/Main/test.txt')
 val_pred_dir = os.path.join(dataset_dir, 'Val_masks/')
@@ -35,7 +35,7 @@ crf_pred_dir = os.path.join(dataset_dir, 'CRF_masks/')
 img_dir = os.path.join(dataset_dir, 'JPEGImages/')
 anns_dir = dataset_dir + 'Annotations/'
 # segmentation groundtruth dir(for all images)
-GT_seg_dir = os.path.join(dataset_dir, 'SegmentationClass/')
+GT_seg_dir = os.path.join(dataset_dir, 'Segmentation_label/')
 # bbox segments dir (for all images)
 Bbox_seg_dir = os.path.join(dataset_dir, 'Segmentation_label_box/')
 # grabcut  segments dir (for all images)
@@ -45,6 +45,35 @@ NUM_CLASSES = 2
 # ignore regions label id
 IGNORE_REG_ID = 2
 
+""" https://blog.csdn.net/baidu_27643275/article/details/90445422"""
+# class IOUMetric:
+#     """
+#     Class to calculate mean-iou using fast_hist method
+#     """
+
+#     def __init__(self, num_classes):
+#         self.num_classes = num_classes
+#         self.hist = np.zeros((num_classes, num_classes))
+
+#     def _fast_hist(self, label_pred, label_true):
+#         # 找出标签中需要计算的类别,去掉了背景
+#         mask = (label_true >= 0) & (label_true < self.num_classes)
+#         # # np.bincount计算了从0到n**2-1这n**2个数中每个数出现的次数，返回值形状(n, n)
+#         hist = np.bincount(
+#             self.num_classes * label_true[mask].astype(int) +
+#             label_pred[mask], minlength=self.num_classes ** 2).reshape(self.num_classes, self.num_classes)
+#         return hist
+
+#     # 输入：预测值和真实值
+#     # 语义分割的任务是为每个像素点分配一个label
+#     def evaluate(self, predictions, gts):
+#         for lp, lt in zip(predictions, gts):
+#             assert len(lp.flatten()) == len(lt.flatten())
+#             self.hist += self._fast_hist(lp.flatten(), lt.flatten())
+            
+#         # miou
+#         iou = np.diag(self.hist) / (self.hist.sum(axis=1) + self.hist.sum(axis=0) - np.diag(self.hist))
+#         miou = np.nanmean(iou) 
 
 
 def count_mIoU(txt_dir, pred_dir, seg_dir):
@@ -57,7 +86,7 @@ def count_mIoU(txt_dir, pred_dir, seg_dir):
                          img = Image.open(seg_dir+img_name+'.png')
                          # resize the groundtruth label
                          # because the pred mask is different size 
-                         img = img.resize((1632, 1216), Image.NEAREST)
+                         img = img.resize((1024, 1024), Image.NEAREST)
                          #GT_seg.shape [H,W]
                          # every value in array is class_id
                          seg = np.array(img)
@@ -92,7 +121,8 @@ def mIoU_with_GT(is_val=False):
            pred_dir = val_pred_dir
         else:
            txt_dir = test_dir
-           pred_dir = crf_pred_dir
+           #pred_dir = crf_pred_dir
+           pred_dir = test_pred_dir
 
         mIoU_GT, IoU_GT = count_mIoU(txt_dir, pred_dir, GT_seg_dir)
 

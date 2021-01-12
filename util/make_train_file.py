@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup # using BeautifulSoup parser to get ann_info
 from tbvoc_info import tbvoc_classes
 
 
-dataset_dir = '/home/zj/yzt/Sputum_Smear.pytorch_3/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
 ann_dir = os.path.join(dataset_dir, 'Annotations/')
 train_dir = os.path.join(dataset_dir, 'ImageSets/Main/train.txt')
 train_pairs_dir = os.path.join(dataset_dir, 'train_pairs.txt')
@@ -38,8 +38,10 @@ def load_class_Bbox(xml_name):
 
                   ann_info = np.array([])
                   for name, xmin, ymin, xmax, ymax in zip(names, xmins, 
-                                                                                         ymins, xmaxs, ymaxs):
-                         ann_info = np.append(ann_info, np.array([name.string, xmin.string, 
+                                                          ymins, xmaxs, ymaxs):
+                         # only for drone here
+                         if name.string == 'drone':
+                            ann_info = np.append(ann_info, np.array([name.string, xmin.string, 
                                                                         ymin.string, xmax.string, ymax.string]))
                   ann_info = ann_info.reshape(-1, 5)
 

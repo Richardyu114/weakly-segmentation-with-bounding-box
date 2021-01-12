@@ -30,7 +30,8 @@ from draw_bbox import get_int_coor
 from fcn import FCN8s, FCN16s, FCN32s, FCNs, VGGNet
 from unet import UNet
 
-dataset_dir = '/home/JFHEALTHCARE/zhentao.yu/ISBI/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+val_pred_dir = os.path.join(dataset_dir, 'Val_masks/')
 # put the masks into label_dir, even include the first grabcut (or box_i) segments
 label_dir = os.path.join(dataset_dir, 'Updated_masks/')
 dataset_pairs_dir = os.path.join(dataset_dir, 'dataset_pairs.txt')
@@ -82,13 +83,17 @@ def update_label(predict_model, device):
                          img = Image.open(os.path.join(img_dir, update_name).rstrip()+'.jpg')
                          img_w = img.size[0]
                          img_h = img.size[1]
-                         img = img.resize((1632, 1216), Image.LANCZOS)
+                         #img = img.resize((1632, 1216), Image.LANCZOS)
+                         # in drone_data,size-1024
+                         img = img.resize((1024, 1024), Image.LANCZOS)
                          input_ = transformations(img).float()
                          # add batch_size dimension
                          #[3, H, W]-->[1, 3, H, W]
                          input_ = input_.unsqueeze_(0)
                          input_ = input_.to(device)
-                         pred = predict_model(input_).view([1216, 1632]).data.cpu()
+                         #pred = predict_model(input_).view([1216, 1632]).data.cpu()
+                         # in drone data, size-1024
+                         pred = predict_model(input_).view([1024, 1024]).data.cpu()
                          #pred.shape[H,W]
                          pred = np.array(pred)
                          """crf smooth prediction"""
@@ -96,7 +101,9 @@ def update_label(predict_model, device):
 
                          """start to update"""
                          last_label = Image.open(os.path.join(label_dir, update_name).rstrip()+'.png')
-                         last_label = last_label.resize((1632, 1216), Image.NEAREST)
+                         #last_label = last_label.resize((1632, 1216), Image.NEAREST)
+                         # in drone_data size-1024
+                         last_label = last_label.resize((1024, 1024), Image.NEAREST)
                          last_label = np.array(last_label)
 
                          # predicted label without false-positive segments
@@ -105,18 +112,25 @@ def update_label(predict_model, device):
                          # predicted label with missed diagnosis 
                          # we just use the box segments as missed diagnosis for now
                          info4check = ANNS[update_name.rstrip()]
-                         masks_missed = np.zeros((1216, 1632), np.uint8)
+                        #  masks_missed = np.zeros((1216, 1632), np.uint8)
+                        # for drone data size-1024
+                         masks_missed = np.zeros((1024, 1024), np.uint8)
                          for box4check in info4check:
                                 xmin = box4check[3]
                                 ymin = box4check[2]
                                 xmax = box4check[5]
                                 ymax = box4check[4]
                                 xmin, ymin, xmax, ymax = get_int_coor(xmin, ymin, 
-                                                                       xmax, ymax, img_w, img_h)
-                                xmin = int(xmin * 1632 / img_w)
-                                xmax = int(xmax * 1632 / img_w)
-                                ymin = int(ymin * 1216 / img_h)
-                                ymax = int(ymax * 1216 / img_h)
+                                                                      xmax, ymax, img_w, img_h)
+                                # xmin = int(xmin * 1632 / img_w)
+                                # xmax = int(xmax * 1632 / img_w)
+                                # ymin = int(ymin * 1216 / img_h)
+                                # ymax = int(ymax * 1216 / img_h)
+                                # for drone data - size 1024
+                                xmin = int(xmin * 1024 / img_w)
+                                xmax = int(xmax * 1024 / img_w)
+                                ymin = int(ymin * 1024 / img_h)
+                                ymax = int(ymax * 1024 / img_h)
                                 if np.sum(updated_label[ymin:ymax, xmin:xmax]) == 0:
                                     masks_missed[ymin:ymax, xmin:xmax] = 1
 

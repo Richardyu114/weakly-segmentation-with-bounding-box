@@ -37,7 +37,9 @@ def run_densecrf(img_dir, img_name, masks_pro):
         # if use PIL.Image.open(), the algorithm will break
         #TODO --need to fix the image problem
         img = cv.imread(os.path.join(img_dir, img_name).rstrip()+'.jpg')
-        img = cv.resize(img, (1632,1216), interpolation = cv.INTER_LINEAR)
+        # img = cv.resize(img, (1632,1216), interpolation = cv.INTER_LINEAR)
+        # for drone-data size 1024
+        img = cv.resize(img, (1024,1024), interpolation = cv.INTER_LINEAR)
 
         # expand to [1,H,W]
         masks_pro = np.expand_dims(masks_pro, 0)
@@ -71,7 +73,8 @@ def run_densecrf(img_dir, img_name, masks_pro):
         return proba
 
 """model test and test after CRF smooth will both perfrom result saving(masks and pairs)"""
-def save_pred_result(img, pred, pred_masks_dir, pred_pairs_dir, box_ann_dir, img_name):
+# 先保存预测的mask和图片混合的，保存的时候已经是resize过后的，画框的时候也是直接在这个基础上画，所以要读取原来的图像尺寸进行bndbox的resize
+def save_pred_result(img, pred, pred_masks_dir, pred_pairs_dir, box_ann_dir, img_name,ori_imW, ori_imH):
         # save pred_masks
         scipy.misc.toimage(pred, cmin=0, cmax=255, pal=colors_map, mode='P').save(
         os.path.join(pred_masks_dir,img_name).rstrip()+ '.png')
@@ -81,11 +84,13 @@ def save_pred_result(img, pred, pred_masks_dir, pred_pairs_dir, box_ann_dir, img
         pred_img = Image.open(os.path.join(pred_masks_dir,img_name).rstrip()+ '.png')
         pred_img = pred_img.convert('RGBA')
         #img_output = img*(1-alpha)+pred_img*alpha 0.3
-        pred_pairs = Image.blend(img, pred_img, 0.3)
+        pred_pairs = Image.blend(img, pred_img, 0.4)
         # need to get better quality image TODO
+        # resize回原来的 尺寸，看得更清楚一些
+        pred_pairs = pred_pairs.resize((ori_imW,ori_imH), Image.LANCZOS)
         pred_pairs.save(os.path.join(pred_pairs_dir, img_name).rstrip()+'.png')
         # draw bbox for show the performance of prediction
-        draw_bbox(img_name, box_ann_dir, pred_pairs_dir, pred_pairs_dir, is_resize=True)
+        draw_bbox(img_name, box_ann_dir, pred_pairs_dir, pred_pairs_dir, is_resize=False)
 
 
 if __name__ == '__main__':

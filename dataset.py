@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
 """file configuration"""
-dataset_dir = '/home/JFHEALTHCARE/zhentao.yu/ISBI/TB_SDI_torch/dataset/TBVOC/VOC2019/'
+dataset_dir = '/home/test/weakly_seg/weakly_segmentation/TB_SDI_torch/dataset/TBVOC/VOC2019/'
 train_dir = os.path.join(dataset_dir, 'ImageSets/Main/train.txt')
 val_dir = os.path.join(dataset_dir, 'ImageSets/Main/val.txt')
 # may use trainval.txt directly, because calculate mIoU of val may useless 
@@ -28,7 +28,7 @@ val_dir = os.path.join(dataset_dir, 'ImageSets/Main/val.txt')
 trainval_dir = os.path.join(dataset_dir, 'ImageSets/Main/trainval.txt')
 img_dir = os.path.join(dataset_dir, 'JPEGImages/')
 # I don't have segmentation groundtruth, so I choose grabcut segments
-label_dir = os.path.join(dataset_dir, 'Updated_masks/')
+label_dir = os.path.join(dataset_dir, 'Segmentation_label/')
 
 
 # define image transformations
@@ -86,9 +86,10 @@ class TBDataset(Dataset):
 
 # need resize  to upsample, or the dimension is incompatible
 # my images' height=1224, 1224 % 32 != 0
-train_dataset = TBDataset( train_dir, 1632, 1216, transformations)
-val_dataset = TBDataset(val_dir, 1632, 1216, transformations)
-trainloader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=2,
+# in drone data -size-1024
+train_dataset = TBDataset( train_dir, 1024, 1024, transformations)
+val_dataset = TBDataset(val_dir, 1024, 1024, transformations)
+trainloader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=2, 
                                           shuffle=True, num_workers=4)
 valloader = torch.utils.data.DataLoader(dataset =val_dataset, batch_size=2, 
                                         shuffle=True, num_workers=4)

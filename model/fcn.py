@@ -144,6 +144,18 @@ class FCNs(nn.Module):
         self.bn5 = nn.BatchNorm2d(32)
         self.classifier = nn.Conv2d(32, n_classes, kernel_size=1) 
         # classifier is 1x1 conv, to reduce channels from 32 to n_class
+        self._initialize_weights()
+    
+    # 初始化转置卷积参数
+    def _initialize_weights(self):
+        for module in self.modules():
+            if isinstance(module, nn.ConvTranspose2d) or isinstance(module, nn.Linear):
+                nn.init.kaiming_normal_(module.weight)
+                if module.bias is not None:
+                    module.bias.data.zero_()
+            elif isinstance(module, nn.BatchNorm2d):
+                module.weight.data.fill_(1)
+                module.bias.data.zero_()
 
     def forward(self, x):
         output = self.pretrained_net(x)

@@ -32,17 +32,18 @@ RGB encode reference:
 # just shrink the area intentionally
 tbvoc_classes = {
         'background': 0,
-        'TBbacillus': 1
+        #'TBbacillus': 1
+        'drone': 1
 }
 
 
 colors = {
     0: [0, 0, 0],
-    1: [128， 0， 0]
+    1: [128,0, 0]
 }
 
 
 colors_map = [
         [0, 0, 0],
-        [128， 0， 0]
+        [128, 0, 0]
 ]
